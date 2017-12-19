@@ -1,4 +1,4 @@
-import EventListener from './utils/eventlistener.js';
+import EventListener from '../../events/eventlistener.js';
 export default class BaseGroup extends EventListener {
     constructor(params) {
         super();

@@ -1,8 +1,10 @@
 import BaseConfig from './baseconfig.js';
 import BaseGroup from './basegroup.js';
+import EventListener from '../../events/eventlistener.js';
 
-export default class BaseApplication {
+export default class BaseApplication extends EventListener {
     constructor(el, cfg) {
+        super();
         this.appConfig = BaseConfig.apply(cfg);
         this.element = el;
         this.engine = new BABYLON.Engine(this.element, this.appConfig.engine.antialias, this.appConfig.engine.options);
@@ -31,11 +33,8 @@ export default class BaseApplication {
         this.root.parent = this;
         this.root.initializeGroup(this.scene, 'application-root');
         this.root.onParented(this.scene, this, this.element);
-        this.onCreate(this.scene);
 
         window.addEventListener('resize', () => this.onResize());
-
-        this.initialized = true;
     }
 
     get canvas() { return this.element; }
@@ -52,6 +51,8 @@ export default class BaseApplication {
 
         if (!options.position) {
             options.position = new BABYLON.Vector3(0, 0, 0);
+        } else {
+            options.position = new BABYLON.Vector3(options.position.x, options.position.y, options.position.z);
         }
 
         let camera;
@@ -59,18 +60,20 @@ export default class BaseApplication {
             case 'default':
             case 'freecamera':
                 camera = new BABYLON.FreeCamera('camera', options.position, this.scene);
-                camera.setTarget(BABYLON.Vector3.Zero());
-                camera.attachControl(this.element, true);
                 break;
 
             case 'arcrotate':
                 camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", 0, 0, 0, BABYLON.Vector3.Zero(), this.scene);
-                camera.attachControl(this.element, true);
                 camera.setPosition(options.position);
+                camera.attachControl(this.element, true);
                 break;
 
             default:
                 console.error('Camera not added, ', type, ' is not found');
+        }
+
+        if (options.useMouseControls) {
+            camera.attachControl(this.element, true);
         }
         this.cameras.push(camera);
     }
@@ -92,6 +95,10 @@ export default class BaseApplication {
      * render engine tick
      */
     tick() {
+        if (!this.initialized) {
+            this.onCreate(this.scene);
+            this.initialized = true;
+        }
         if (this.initialized && this.cameras.length > 0) {
             this.scene.render();
             this.onRender(this.engine.getDeltaTime());
