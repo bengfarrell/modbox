@@ -22,7 +22,6 @@ export default {
         let els = node.querySelectorAll(settings.selector);
         let rootlevelEls = node.querySelectorAll(this.attributeSelector(settings.cacheroot));
 
-
         let nondeepEls = [];
         // weed out where we selected past the desired root
         for (let e = 0; e < els.length; e++) {
@@ -48,7 +47,7 @@ export default {
 
                 if (!level[prop]) {
                     if (props.length === 0) {
-                        level[prop] = els[c];
+                        level[prop] = nondeepEls[c];
                     } else {
                         level[prop] = {}
                     }
