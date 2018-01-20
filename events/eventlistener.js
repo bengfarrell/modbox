@@ -14,7 +14,7 @@ export default class EventListener {
      * @param cb
      * @returns {{type: *, callback: *}}
      */
-    addListener(type, cb) {
+    addEventListener(type, cb) {
         let listener = { type: type, callback: cb };
         this._listeners.push(listener);
         return listener;
@@ -24,7 +24,7 @@ export default class EventListener {
      * remove event listener
      * @param listener
      */
-    removeListener(listener) {
+    removeEventListener(listener) {
         for (let c = 0; c < this._listeners.length; c++) {
             if (listener === this._listeners[c]) {
                 this._listeners.splice(c, 0);
@@ -35,13 +35,12 @@ export default class EventListener {
 
     /**
      * trigger event
-     * @param type
-     * @param params
+     * @param custom event
      */
-    triggerEvent(type, params) {
+    triggerEvent(ce) {
         this._listeners.forEach( function(l) {
-            if (type == l.type) {
-                l.callback.apply(this, [type, params]);
+            if (ce.type === l.type) {
+                l.callback.apply(this, [ce]);
             }
         });
     }
