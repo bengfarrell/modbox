@@ -113,11 +113,11 @@ export default class BaseApplication extends EventListener {
     replaceAllScenes(scene, children) {
         if (!children) {
             this.engine.stopRenderLoop();
-            this.engine.runRenderLoop( () => this.tick() );
 
             this.scene = scene;
             this.root.scene = scene;
             children = this.root.children;
+            this.engine.runRenderLoop( () => this.tick() );
         }
         for (let c = 0; c < children.length; c++) {
             if (children[c].isGroup) {
